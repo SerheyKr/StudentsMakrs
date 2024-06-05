@@ -168,3 +168,4 @@ C:\Users\serge\source\repos\StudentsMakrs\StudentsMakrs\StudentsMakrs\obj\Debug\
 C:\Users\serge\source\repos\StudentsMakrs\StudentsMakrs\StudentsMakrs\obj\Debug\net8.0\StudentsMakrs.pdb
 C:\Users\serge\source\repos\StudentsMakrs\StudentsMakrs\StudentsMakrs\obj\Debug\net8.0\StudentsMakrs.genruntimeconfig.cache
 C:\Users\serge\source\repos\StudentsMakrs\StudentsMakrs\StudentsMakrs\obj\Debug\net8.0\ref\StudentsMakrs.dll
+C:\Users\serge\source\repos\StudentsMakrs\StudentsMakrs\StudentsMakrs\obj\Debug\net8.0\StudentsMakrs.sourcelink.json

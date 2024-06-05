@@ -6,6 +6,7 @@ using StudentsMakrs.Client.Services;
 using StudentsMakrs.Components;
 using StudentsMakrs.Components.Account;
 using StudentsMakrs.Data;
+using StudentsMakrs.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,6 +38,7 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
 	.AddDefaultTokenProviders();
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
+builder.Services.AddSingleton<IStudentService, StudentServiceServer>();
 
 var app = builder.Build();
 
@@ -57,12 +59,13 @@ app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 app.UseAntiforgery();
-app.MapGet("/Students/All", (IStudentService service) => service.GetStudents());
 
 app.MapRazorComponents<App>()
 	.AddInteractiveServerRenderMode()
 	.AddInteractiveWebAssemblyRenderMode()
 	.AddAdditionalAssemblies(typeof(StudentsMakrs.Client._Imports).Assembly);
+
+app.MapGet("/Students/All", (IStudentService service) => service.GetStudents());
 
 // Add additional endpoints required by the Identity /Account Razor components.
 app.MapAdditionalIdentityEndpoints();

@@ -1,12 +1,13 @@
 ﻿using StudentsMakrs.Client.Models;
+using System.Net.Http.Json;
 
 namespace StudentsMakrs.Client.Services
 {
     public class StudentServiceClient(HttpClient httpClient) : IStudentService
     {
-        public Task<List<Student>> GetStudents()
+        public async Task<List<Student>> GetStudents()
         {
-            throw new NotImplementedException();
+            return await httpClient.GetFromJsonAsync<List<Student>>("/Students/All") ?? throw new InvalidProgramException();
         }
 
         public Task<bool> PostStudent()

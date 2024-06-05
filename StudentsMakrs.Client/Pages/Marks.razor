@@ -1,5 +1,9 @@
 ﻿@page "/marks"
 @using StudentsMakrs.Client.Models
+@using StudentsMakrs.Client.Services
+@implements IDisposable
+@inject IStudentService StudentService
+@inject PersistentComponentState PersistentComponentState
 @attribute [StreamRendering]
 
 <PageTitle>Marks</PageTitle>
@@ -21,6 +25,7 @@ else
                 <th>Faculty</th>
                 <th>Department</th>
                 <th>Average mark</th>
+                <th>Total marks count</th>
             </tr>
         </thead>
         <tbody>
@@ -30,7 +35,8 @@ else
                     <td>@student.FullName</td>
                     <td>@student.Faculty.Name</td>
                     <td>@student.Department.Name</td>
-                    <td>@(student.Marks.Sum(x => x.CurrentMark / x.MaxMark * 5) / Math.Max(1, student.Marks.Count))</td>
+                    <td>@(student.Marks.Sum(x => x.CurrentMark) / Math.Max(1, student.Marks.Count))</td>
+                    <td>@student.Marks.Count</td>
                     <td align="right"><button>Details</button></td>
                 </tr>
             }
@@ -42,12 +48,28 @@ else
 }
 
 @code {
-    private List<Student> students;
+    private List<Student>? students;
+    private PersistingComponentStateSubscription persistingSubscription;
 
     protected override async Task OnInitializedAsync()
     {
         // Simulate asynchronous loading to demonstrate streaming rendering
         await Task.Delay(1);
 
+        persistingSubscription = PersistentComponentState.RegisterOnPersisting(PersistData);
+
+        if (!PersistentComponentState.TryTakeFromJson<List<Student>>(nameof(students), out students))
+        {
+            students = await StudentService.GetStudents();
+        }
     }
+
+    private Task PersistData()
+    {
+        PersistentComponentState.PersistAsJson(nameof(students), students);
+
+        return Task.CompletedTask;
+    }
+
+    void IDisposable.Dispose() => persistingSubscription.Dispose();
 }

@@ -1036,3 +1036,4 @@ C:\Users\serge\source\repos\StudentsMakrs\StudentsMakrs\StudentsMakrs.Client\obj
 C:\Users\serge\source\repos\StudentsMakrs\StudentsMakrs\StudentsMakrs.Client\obj\Debug\net8.0\refint\StudentsMakrs.Client.dll
 C:\Users\serge\source\repos\StudentsMakrs\StudentsMakrs\StudentsMakrs.Client\obj\Debug\net8.0\StudentsMakrs.Client.pdb
 C:\Users\serge\source\repos\StudentsMakrs\StudentsMakrs\StudentsMakrs.Client\obj\Debug\net8.0\ref\StudentsMakrs.Client.dll
+C:\Users\serge\source\repos\StudentsMakrs\StudentsMakrs\StudentsMakrs.Client\obj\Debug\net8.0\StudentsMakrs.Client.sourcelink.json

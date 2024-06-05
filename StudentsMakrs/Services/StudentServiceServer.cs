@@ -5,9 +5,39 @@ namespace StudentsMakrs.Services
 {
     public class StudentServiceServer : IStudentService
     {
-        public Task<List<Student>> GetStudents()
+        public async Task<List<Student>> GetStudents()
         {
-            throw new NotImplementedException();
+            await Task.Delay(10);
+
+            var student = new Student()
+            {
+                FirstName = "First",
+                SecondName = "Second",
+                LastName = "Last",
+                Marks =
+                    [
+                        new Mark()
+                        {
+                            CurrentMark = 100,
+                            MaxMark = 100,
+                        }
+                    ],
+                Department = new Department()
+                {
+                    Name = "Depart",
+                },
+                Faculty = new Faculty()
+                {
+                    Name = "Faculty",
+                }
+            };
+
+            var list = new List<Student>();
+            for (int i = 0; i < 10; i++)
+            {
+                list.Add(student);
+            }
+            return list;
         }
 
         public Task<bool> PostStudent()

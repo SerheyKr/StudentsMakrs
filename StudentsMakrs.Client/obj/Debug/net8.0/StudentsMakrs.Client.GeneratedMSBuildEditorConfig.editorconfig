@@ -22,6 +22,10 @@ build_property.GenerateRazorMetadataSourceChecksumAttributes =
 build_property.MSBuildProjectDirectory = C:\Users\serge\source\repos\StudentsMakrs\StudentsMakrs\StudentsMakrs.Client
 build_property._RazorSourceGeneratorDebug = 
 
+[C:/Users/serge/source/repos/StudentsMakrs/StudentsMakrs/StudentsMakrs.Client/Pages/AdvancedSearch.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWR2YW5jZWRTZWFyY2gucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/serge/source/repos/StudentsMakrs/StudentsMakrs/StudentsMakrs.Client/Pages/Auth.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQXV0aC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
