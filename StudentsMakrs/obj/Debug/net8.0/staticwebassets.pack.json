@@ -1,0 +1,41 @@
+{
+  "Files": [
+    {
+      "Id": "C:\\Users\\serge\\source\\repos\\StudentsMakrs\\StudentsMakrs\\StudentsMakrs\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\StudentsMakrs.bundle.scp.css",
+      "PackagePath": "staticwebassets\\StudentsMakrs.bundle.scp.css"
+    },
+    {
+      "Id": "C:\\Users\\serge\\source\\repos\\StudentsMakrs\\StudentsMakrs\\StudentsMakrs\\wwwroot\\app.css",
+      "PackagePath": "staticwebassets\\app.css"
+    },
+    {
+      "Id": "C:\\Users\\serge\\source\\repos\\StudentsMakrs\\StudentsMakrs\\StudentsMakrs\\wwwroot\\bootstrap\\bootstrap.min.css",
+      "PackagePath": "staticwebassets\\bootstrap\\bootstrap.min.css"
+    },
+    {
+      "Id": "C:\\Users\\serge\\source\\repos\\StudentsMakrs\\StudentsMakrs\\StudentsMakrs\\wwwroot\\bootstrap\\bootstrap.min.css.map",
+      "PackagePath": "staticwebassets\\bootstrap\\bootstrap.min.css.map"
+    },
+    {
+      "Id": "C:\\Users\\serge\\source\\repos\\StudentsMakrs\\StudentsMakrs\\StudentsMakrs\\wwwroot\\favicon.png",
+      "PackagePath": "staticwebassets\\favicon.png"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.StudentsMakrs.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.StudentsMakrs.props",
+      "PackagePath": "build\\StudentsMakrs.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.StudentsMakrs.props",
+      "PackagePath": "buildMultiTargeting\\StudentsMakrs.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.StudentsMakrs.props",
+      "PackagePath": "buildTransitive\\StudentsMakrs.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

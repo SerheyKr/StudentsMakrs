@@ -1,0 +1,37 @@
+{
+  "Files": [
+    {
+      "Id": "C:\\Users\\serge\\source\\repos\\StudentsMakrs\\StudentsMakrs\\StudentsMakrs.Client\\bin\\Debug\\net8.0\\wwwroot\\_framework\\blazor.webassembly.js",
+      "PackagePath": "staticwebassets\\_framework\\blazor.webassembly.js"
+    },
+    {
+      "Id": "C:\\Users\\serge\\source\\repos\\StudentsMakrs\\StudentsMakrs\\StudentsMakrs.Client\\obj\\Debug\\net8.0\\compressed\\we2r3un4gt.gz",
+      "PackagePath": "staticwebassets\\_framework\\blazor.webassembly.js.gz"
+    },
+    {
+      "Id": "C:\\Users\\serge\\source\\repos\\StudentsMakrs\\StudentsMakrs\\StudentsMakrs.Client\\wwwroot\\appsettings.Development.json",
+      "PackagePath": "staticwebassets\\appsettings.Development.json"
+    },
+    {
+      "Id": "C:\\Users\\serge\\source\\repos\\StudentsMakrs\\StudentsMakrs\\StudentsMakrs.Client\\wwwroot\\appsettings.json",
+      "PackagePath": "staticwebassets\\appsettings.json"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.StudentsMakrs.Client.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.StudentsMakrs.Client.props",
+      "PackagePath": "build\\StudentsMakrs.Client.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.StudentsMakrs.Client.props",
+      "PackagePath": "buildMultiTargeting\\StudentsMakrs.Client.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.StudentsMakrs.Client.props",
+      "PackagePath": "buildTransitive\\StudentsMakrs.Client.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

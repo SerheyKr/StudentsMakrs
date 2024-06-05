@@ -1,0 +1,22 @@
+﻿@page "/certificates"
+@rendermode InteractiveAuto
+
+<PageTitle>Certificates</PageTitle>
+
+<h1>Certificates</h1>
+
+<input type="text" value="" placeholder="Input your id" />
+
+<input type="text" value="" placeholder="Input your password" />
+
+
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+
+@code {
+    private int currentCount = 0;
+
+    private void IncrementCount()
+    {
+        currentCount++;
+    }
+}

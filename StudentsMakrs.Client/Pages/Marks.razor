@@ -1,0 +1,53 @@
+﻿@page "/marks"
+@using StudentsMakrs.Client.Models
+@attribute [StreamRendering]
+
+<PageTitle>Marks</PageTitle>
+
+<h1>Marks</h1>
+
+<p>This component demonstrates showing data.</p>
+
+@if (students == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Full name</th>
+                <th>Faculty</th>
+                <th>Department</th>
+                <th>Average mark</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var student in students)
+            {
+                <tr>
+                    <td>@student.FullName</td>
+                    <td>@student.Faculty.Name</td>
+                    <td>@student.Department.Name</td>
+                    <td>@(student.Marks.Sum(x => x.CurrentMark / x.MaxMark * 5) / Math.Max(1, student.Marks.Count))</td>
+                    <td align="right"><button>Details</button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <button>
+        Add
+    </button>
+}
+
+@code {
+    private List<Student> students;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Simulate asynchronous loading to demonstrate streaming rendering
+        await Task.Delay(1);
+
+    }
+}
