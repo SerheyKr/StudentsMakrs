@@ -22,6 +22,10 @@ build_property.GenerateRazorMetadataSourceChecksumAttributes =
 build_property.MSBuildProjectDirectory = C:\Users\serge\source\repos\StudentsMakrs\StudentsMakrs\StudentsMakrs.Client
 build_property._RazorSourceGeneratorDebug = 
 
+[C:/Users/serge/source/repos/StudentsMakrs/StudentsMakrs/StudentsMakrs.Client/Pages/AddNewStudent.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRkTmV3U3R1ZGVudC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/serge/source/repos/StudentsMakrs/StudentsMakrs/StudentsMakrs.Client/Pages/AdvancedSearch.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWR2YW5jZWRTZWFyY2gucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
@@ -36,6 +40,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/serge/source/repos/StudentsMakrs/StudentsMakrs/StudentsMakrs.Client/Pages/Marks.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTWFya3MucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/serge/source/repos/StudentsMakrs/StudentsMakrs/StudentsMakrs.Client/Pages/StudentDetails.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU3R1ZGVudERldGFpbHMucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/serge/source/repos/StudentsMakrs/StudentsMakrs/StudentsMakrs.Client/RedirectToLogin.razor]

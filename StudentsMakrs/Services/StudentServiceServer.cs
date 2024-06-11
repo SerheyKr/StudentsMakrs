@@ -1,46 +1,43 @@
-﻿using StudentsMakrs.Client.Models;
-using StudentsMakrs.Client.Services;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using StudentsMakrs.Client.Interfaces;
+using StudentsMakrs.Client.Models;
 
 namespace StudentsMakrs.Services
 {
     public class StudentServiceServer : IStudentService
     {
-        public async Task<List<Student>> GetStudents()
+        public Task<IActionResult> DeleteStudent(string student)
         {
-            await Task.Delay(10);
-
-            var student = new Student()
-            {
-                FirstName = "First",
-                SecondName = "Second",
-                LastName = "Last",
-                Marks =
-                    [
-                        new Mark()
-                        {
-                            CurrentMark = 100,
-                            MaxMark = 100,
-                        }
-                    ],
-                Department = new Department()
-                {
-                    Name = "Depart",
-                },
-                Faculty = new Faculty()
-                {
-                    Name = "Faculty",
-                }
-            };
-
-            var list = new List<Student>();
-            for (int i = 0; i < 10; i++)
-            {
-                list.Add(student);
-            }
-            return list;
+            throw new NotImplementedException();
         }
 
-        public Task<bool> PostStudent()
+        public Task<Student> GetStudent(string ID)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<List<Student>> GetStudents()
+        {
+            var context = Program.GetDBContext();
+            var x = await context.Students.ToListAsync();
+
+            return x;
+        }
+
+        public async Task<IActionResult> PostStudent(Student student)
+        {
+            var context = Program.GetDBContext();
+            student.StudentID = Guid.NewGuid().ToString();
+            student.StudentPassword = Guid.NewGuid().ToString().Replace("-", "");
+
+            await context.AddAsync(student);
+            await context.SaveChangesAsync();
+
+            return new OkObjectResult(student);
+        }
+
+        public Task<IActionResult> PutStudent(Student student)
         {
             throw new NotImplementedException();
         }

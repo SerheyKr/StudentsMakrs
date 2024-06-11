@@ -21,6 +21,18 @@
       "PackagePath": "staticwebassets\\favicon.png"
     },
     {
+      "Id": "C:\\Users\\serge\\source\\repos\\StudentsMakrs\\StudentsMakrs\\StudentsMakrs\\wwwroot\\fix.py",
+      "PackagePath": "staticwebassets\\fix.py"
+    },
+    {
+      "Id": "C:\\Users\\serge\\source\\repos\\StudentsMakrs\\StudentsMakrs\\StudentsMakrs\\wwwroot\\package-lock.json",
+      "PackagePath": "staticwebassets\\package-lock.json"
+    },
+    {
+      "Id": "C:\\Users\\serge\\source\\repos\\StudentsMakrs\\StudentsMakrs\\StudentsMakrs\\wwwroot\\package.json",
+      "PackagePath": "staticwebassets\\package.json"
+    },
+    {
       "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.StudentsMakrs.Microsoft.AspNetCore.StaticWebAssets.props",
       "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
     },

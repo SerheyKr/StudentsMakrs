@@ -1,15 +1,29 @@
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using StudentsMakrs.Client;
+using StudentsMakrs;
+using StudentsMakrs.Client.Interfaces;
 using StudentsMakrs.Client.Services;
 
-var builder = WebAssemblyHostBuilder.CreateDefault(args);
+namespace StudentsMakrs.Client
+{
+    internal static class Program
+    {
+        private static async Task Main(string[] args)
+        {
+            var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
-builder.Services.AddAuthorizationCore();
-builder.Services.AddCascadingAuthenticationState();
-builder.Services.AddSingleton(new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-builder.Services.AddSingleton<AuthenticationStateProvider, PersistentAuthenticationStateProvider>();
-builder.Services.AddSingleton<IStudentService, StudentServiceClient>();
+            builder.Services.AddAuthorizationCore();
+            builder.Services.AddCascadingAuthenticationState();
 
 
-await builder.Build().RunAsync();
+            builder.Services.AddSingleton(new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+            builder.Services.AddSingleton<AuthenticationStateProvider, PersistentAuthenticationStateProvider>();
+            builder.Services.AddSingleton<IStudentService, StudentServiceClient>();
+            builder.Services.AddSingleton<IFacultyService, FacultyServiceClient>();
+
+
+            await builder.Build().RunAsync();
+        }
+    }
+}

@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@polymer/paper-dialog": "^3.0.1",
+    "webcomponents": "^0.1.4"
+  }
+}
