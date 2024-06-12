@@ -1,0 +1,24 @@
+﻿@page "/usersDetails"
+@using StudentsMakrs.Client.Interfaces
+@using StudentsMakrs
+@using StudentsMakrs.Client.Models
+@inject IJSRuntime JS
+@inject IStudentService StudentService
+@inject PersistentComponentState PersistentComponentState
+@inject NavigationManager navigationManager
+@attribute [StreamRendering]
+@rendermode InteractiveAuto
+
+<PageTitle>Student Details</PageTitle>
+<h1>Student Details</h1>
+
+<input type="text" value="" placeholder="Input student ID" />
+<button class="btn btn-primary">Find student</button>
+
+@code {
+
+    protected override async Task OnInitializedAsync()
+    {
+        
+    }
+}

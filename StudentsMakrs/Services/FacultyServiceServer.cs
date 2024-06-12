@@ -7,14 +7,24 @@ namespace StudentsMakrs.Services
 {
     public class FacultyServiceServer : IFacultyService
     {
-        public Task<IActionResult> DeleteDepartment(Department t)
+        public async Task<IActionResult> DeleteDepartment(int id)
         {
-            throw new NotImplementedException();
+            var context = Program.GetDBContext();
+            var item = await context.Departments.FindAsync(id) ?? throw new ArgumentException($"Givend id is not finded {id}", nameof(id));
+            context.Departments.Remove(item);
+            await context.SaveChangesAsync();
+
+            return new OkResult();
         }
 
-        public Task<IActionResult> DeleteFaculty(Faculty t)
+        public async Task<IActionResult> DeleteFaculty(int id)
         {
-            throw new NotImplementedException();
+            var context = Program.GetDBContext();
+            var item = await context.Faculties.FindAsync(id) ?? throw new ArgumentException($"Givend id is not finded {id}", nameof(id));
+            context.Faculties.Remove(item);
+            await context.SaveChangesAsync();
+
+            return new OkResult();
         }
 
         public Task<Department> GetDepartment(int ID)

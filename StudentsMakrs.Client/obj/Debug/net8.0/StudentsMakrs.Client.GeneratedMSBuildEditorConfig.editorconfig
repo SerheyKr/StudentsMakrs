@@ -46,6 +46,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU3R1ZGVudERldGFpbHMucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/serge/source/repos/StudentsMakrs/StudentsMakrs/StudentsMakrs.Client/Pages/UsersDetails.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVXNlcnNEZXRhaWxzLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/serge/source/repos/StudentsMakrs/StudentsMakrs/StudentsMakrs.Client/RedirectToLogin.razor]
 build_metadata.AdditionalFiles.TargetPath = UmVkaXJlY3RUb0xvZ2luLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 

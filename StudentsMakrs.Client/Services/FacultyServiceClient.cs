@@ -8,14 +8,18 @@ namespace StudentsMakrs.Client.Services
 {
     public class FacultyServiceClient(HttpClient httpClient) : IFacultyService
     {
-        public Task<IActionResult> DeleteDepartment(Department t)
+        public async Task<IActionResult> DeleteDepartment(int t)
         {
-            throw new NotImplementedException();
+            await httpClient.DeleteAsync($"Department/Delete/{t}");
+
+            return new OkResult();
         }
 
-        public Task<IActionResult> DeleteFaculty(Faculty t)
+        public async Task<IActionResult> DeleteFaculty(int t)
         {
-            throw new NotImplementedException();
+            await httpClient.DeleteAsync($"Faculty/Delete/{t}");
+
+            return new OkResult();
         }
 
         public Task<Department> GetDepartment(int ID)

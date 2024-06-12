@@ -1,10 +1,14 @@
-﻿namespace StudentsMakrs.Client.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+
+namespace StudentsMakrs.Client.Models
 {
     public class StudentSubject
     {
-        public int StudentId1 { get; set; }
-        public int SubjectId1 { get; set; }
+        public string StudentIdSec { get; set; }
         public virtual Student Student { get; set; }
+
+        public int SubjectIdSec { get; set; }
         public virtual Subject Subject { get; set; }
     }
 }

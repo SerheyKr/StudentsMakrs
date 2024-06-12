@@ -10,5 +10,7 @@ namespace StudentsMakrs.Client.Interfaces
         Task<IActionResult> PostStudent(Student student);
         Task<IActionResult> PutStudent(Student student);
         Task<IActionResult> DeleteStudent(string student);
+        Task<IActionResult> AddSubjectToStudent(Student student, int subject);
+        Task<IActionResult> RemoveSubject(string student, int subject);
     }
 }

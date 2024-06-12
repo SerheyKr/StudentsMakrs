@@ -2,23 +2,321 @@
 @using StudentsMakrs.Client.Interfaces
 @using StudentsMakrs
 @using StudentsMakrs.Client.Models
-@inject IJSRuntime JS
 @inject IStudentService StudentService
+@inject ISubjectService SubjectService
+@inject IMarksService MarksService
 @inject PersistentComponentState PersistentComponentState
 @inject NavigationManager navigationManager
+@inject IJSRuntime jsRuntime
 @attribute [StreamRendering]
 @rendermode InteractiveAuto
 
 <PageTitle>Student Details</PageTitle>
 <h1>Student Details</h1>
 
-<input type="text" value="" placeholder="Input student ID" />
-<button class="btn btn-primary">Find student</button>
+@if (student == null)
+{
+    <p><em>Loading...</em></p>
+} else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Full name</th>
+                <th>Faculty</th>
+                <th>Department</th>
+                <th>Average mark</th>
+                <th>Total marks count</th>
+                <th>Student ID</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    @student.FullName
+                </td>
+                <td>@student.Faculty.FacultyName</td>
+                <td>@($"{student.Department.DepartmentName}-{student.Department.BranchName}") </td>
+                <td>@(student.Marks.Sum(x => x.CurrentMark) / Math.Max(1, student.Marks.Count))</td>
+                <td>@student.Marks.Count</td>
+                <td>@student.StudentID</td>
+            </tr>
+        </tbody>
+    </table>
+    <h1>Marks</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Subject</th>
+                <th>Mark</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var mark in student.Marks.OrderBy(x => x.Subject))
+            {
+                <tr>
+                    @if (subjects == null)
+                    {
+                        <th>Loading...</th>
+                    } else
+                    {
+                        <th>@(subjects!.Find(x => x.Id == mark.SubjectId)!.Name)</th>
+                        <th>@mark.CurrentMark</th>
+                        <th>@mark.MarkDate.ToString()</th>
+                        <th><button class="btn btn-primary" @onclick="@(e => RemoveStudentMark(mark))">-</button></th>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+    <button class="btn btn-primary" onclick="addMarkForm.open();">Add mark</button>
+    <h1>Subjects</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Subject name</th>
+                <th>Average mark</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var subject in student.Subjects)
+            {
+                <tr>
+                    <th>@subject.Name</th>
+                    @if (student.Marks.FindAll(x => x.SubjectId == subject.Id).Count > 0)
+                    {
+                        <th>
+                            @((student.Marks.FindAll(x => x.SubjectId == subject.Id)).Sum(x => x.CurrentMark) /
+                                (student.Marks.FindAll(x => x.SubjectId == subject.Id).Count()))
+                        </th>
+                        <th><button class="btn btn-primary" @onclick="@(e => RemoveStudentSubject(subject))">-</button></th>
+                    } else
+                    {
+                        <th>No marks</th>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+    <button class="btn btn-primary" @onclick="@OpenSecondSubjectSelector">Add subject</button>
+}
+
+<paper-dialog elevation=3 align="center" id="addMarkForm" class="paper-dialog-block vis-hiden" aria-hidden="true">
+    <h2>Add mark</h2>
+    <paper-dialog-scrollable class="vis-hiden paper-block">
+        <div>Mark: <input @bind="addMarkMark" type="number" name="start_date" placeholder="mark" min="0" max="100"></div>
+        <div>Date: <input @bind="addMarkTime" type="date" name="start_date" placeholder="mark date"></div>
+        <div>
+            Subject:
+            @if (subjectSelectorMarkForm == null)
+            {
+                <button class="btn btn-primary" @onclick="@OpenSubjectSelector">
+                    Subject
+                </button>
+            }
+            else
+            {
+                <button class="btn btn-primary" @onclick="@OpenSubjectSelector">
+                    @subjectSelectorMarkForm.Name
+                </button>
+            }
+        </div>
+        <div><button class="btn btn-primary" @onclick="@AddMark">Add</button></div>
+    </paper-dialog-scrollable>
+</paper-dialog>
+
+<paper-dialog elevation=3 align="center" id="selectSubject" class="paper-dialog-block vis-hiden" aria-hidden="true">
+    <h2>Select subject</h2>
+    <paper-dialog-scrollable class="vis-hiden paper-block">
+        @if (subjects != null)
+        {
+            @foreach (var x in subjects)
+            {
+                <div>
+                    <button class="btn btn-primary" @onclick="@(async e => {await SelectSubject(x);})">@x.Name</button>
+                    <button class="btn btn-primary" @onclick="@(e => RemoveSubject(x))">-</button>
+                </div>
+            }
+        }
+        <div><button class="btn btn-primary" onclick="addSubject.open()">Add</button></div>
+    </paper-dialog-scrollable>
+</paper-dialog>
+
+<paper-dialog elevation=3 align="center" id="selectSubjectSecond" class="paper-dialog-block vis-hiden" aria-hidden="true">
+    <h2>Select subject</h2>
+    <paper-dialog-scrollable class="vis-hiden paper-block">
+        @if (subjects != null)
+        {
+            @foreach (var x in subjects)
+            {
+                <div>
+                    <button class="btn btn-primary" @onclick="@(async e => {await AddSubjectToStudent(x);})">@x.Name</button>
+                    <button class="btn btn-primary" @onclick="@(e => RemoveSubject(x))">-</button>
+                </div>
+            }
+        }
+        <div><button class="btn btn-primary" onclick="addSubject.open()">Add</button></div>
+    </paper-dialog-scrollable>
+</paper-dialog>
+
+<paper-dialog elevation=3 align="center" id="addSubject" class="paper-dialog-block vis-hiden" aria-hidden="true">
+    <h2>Add subject</h2>
+    <paper-dialog-scrollable class="vis-hiden paper-block">
+        <div>Name: <input @bind="subjectToAddName" placeholder="Subject name" /></div>
+        <div><button class="btn btn-primary" @onclick="@AddSubject">Add</button></div>
+    </paper-dialog-scrollable>
+</paper-dialog>
+
+<script>
+    function OpenSelectSubject() 
+    {
+        selectSubject.open();
+    }
+    function OpenAddMark() 
+    {
+        addMarkForm.open();
+    }
+    function OpenSecondSelectSubject() 
+    {
+        selectSubjectSecond.open();
+    }
+    function CloseSelectSubject() 
+    {
+        selectSubject.close();
+    }
+    function CloseAllDialogs() 
+    {
+        addMarkForm.close();
+        selectSubject.close();
+        addSubject.close();
+        selectSubjectSecond.close();
+    }
+</script>
 
 @code {
+    private Student? student;
+    [SupplyParameterFromQuery]
+    private string? ID { get; set; }
+
+    private string? subjectToAddName;
+
+    private List<Subject>? subjects;
+    private Subject? subjectSelectorMarkForm;
+    private DateTime? addMarkTime = DateTime.Now;
+    private int? addMarkMark;
 
     protected override async Task OnInitializedAsync()
     {
-        
+        await LoadStudentData();
+        await LoadSubjectData();
+    }
+
+    protected async Task SelectSubject(Subject x)
+    {
+        subjectSelectorMarkForm = x;
+        await jsRuntime.InvokeVoidAsync("CloseSelectSubject");
+    }
+
+    protected async void AddMark()
+    {
+        if (subjectSelectorMarkForm != null && addMarkTime != null && addMarkMark != null && student != null)
+        {
+            if (addMarkMark >= 0 && addMarkMark <= 100)
+            {
+                await MarksService.PostMark(new Mark()
+                {
+                    StudentId = student.StudentID,
+                    SubjectId = subjectSelectorMarkForm.Id,
+                    MarkDate = addMarkTime ?? DateTime.Now,
+                    CurrentMark = addMarkMark ?? 0,
+                });
+                await jsRuntime.InvokeVoidAsync("CloseAllDialogs");
+                student = null;
+                await LoadStudentData();
+            }
+        }
+    }
+
+    protected async Task OpenSubjectSelector()
+    {
+        await LoadSubjectData();
+        await jsRuntime.InvokeVoidAsync("OpenSelectSubject");
+    }
+
+    protected async Task OpenSecondSubjectSelector()
+    {
+        await LoadSubjectData();
+        await jsRuntime.InvokeVoidAsync("OpenSecondSelectSubject");
+    }
+
+    protected async Task AddSubject()
+    {
+        if (!string.IsNullOrEmpty(subjectToAddName))
+        {
+            Subject toAdd = new Subject()
+            {
+                Name = subjectToAddName,
+            };
+            await SubjectService.Post(toAdd);
+
+            await jsRuntime.InvokeVoidAsync("CloseAllDialogs");
+            await LoadStudentData();
+            await LoadSubjectData();
+        }
+    }
+
+    protected async Task AddSubjectToStudent(Subject? toAdd)
+    {
+        if (toAdd != null && student != null)
+        {
+            await StudentService.AddSubjectToStudent(student, toAdd.Id);
+            await LoadStudentData();
+        }
+    }
+
+    protected async Task LoadStudentData()
+    {
+        student = null;
+        if (!string.IsNullOrEmpty(ID))
+            student = await StudentService.GetStudent(ID);
+        StateHasChanged();
+    }
+
+    protected async Task LoadSubjectData()
+    {
+        subjects = await SubjectService.Gets();
+        StateHasChanged();
+    }
+
+    protected async Task RemoveStudentMark(Mark mark)
+    {
+        await MarksService.DeleteMark(mark.Id);
+
+        await jsRuntime.InvokeVoidAsync("CloseAllDialogs");
+        await LoadStudentData();
+        await LoadSubjectData();
+    }
+
+    protected async Task RemoveStudentSubject(Subject subject)
+    {
+        if (student == null)
+            return;
+        await StudentService.RemoveSubject(student.StudentID, subject.Id);
+
+        await jsRuntime.InvokeVoidAsync("CloseAllDialogs");
+        await LoadStudentData();
+        await LoadSubjectData();
+    }
+
+    protected async Task RemoveSubject(Subject subject)
+    {
+        await SubjectService.Delete(subject.Id);
+
+        await jsRuntime.InvokeVoidAsync("CloseAllDialogs");
+        await LoadStudentData();
+        await LoadSubjectData();
     }
 }

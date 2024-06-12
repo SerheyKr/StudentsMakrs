@@ -9,11 +9,11 @@ namespace StudentsMakrs.Client.Interfaces
         Task<List<Department>> GetDepartments();
         Task<IActionResult> PostDepartment(Department t);
         Task<IActionResult> PutDepartment(Department t);
-        Task<IActionResult> DeleteDepartment(Department t);
+        Task<IActionResult> DeleteDepartment(int id);
         Task<Faculty> GetFaculty(int ID);
         Task<List<Faculty>> GetFaculties();
         Task<IActionResult> PostFaculty(Faculty t);
         Task<IActionResult> PutFaculty(Faculty t);
-        Task<IActionResult> DeleteFaculty(Faculty t);
+        Task<IActionResult> DeleteFaculty(int id);
     }
 }

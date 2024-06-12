@@ -1,9 +1,8 @@
-﻿@page "/marks/addStudent"
+﻿@page "/students/addStudent"
 @using StudentsMakrs.Client.Interfaces
 @using StudentsMakrs.Client.Models
 @using StudentsMakrs.Client.Services
 @using StudentsMakrs
-@inject IJSRuntime JS
 @inject IStudentService StudentService
 @inject IFacultyService FacultyService
 @inject PersistentComponentState PersistentComponentState
@@ -24,7 +23,7 @@
 <button class="btn btn-primary" @onclick="@LoadDepartments">@(currentDepartment != null ? currentDepartment.FullName : "Select department")</button>
 
 <button class="btn btn-primary" @onclick="@AddStudent">Add</button>
-<button class="btn btn-primary" @onclick="@BackToMarks">Cancel</button>
+<button class="btn btn-primary" @onclick="@Back">Cancel</button>
 
 <paper-dialog elevation=3 align="center" id="faculty" class="paper-dialog-block vis-hiden" aria-hidden="true">
     <h2>Faculty</h2>
@@ -32,7 +31,8 @@
         @foreach (var x in faculties ?? new List<Faculty>())
         {
             <div>
-                <button class="btn btn-primary" @onclick="@(e => {currentFaculty = x; CloseAllDialogs();})">@x.FacultyName</button>
+                <button class="btn btn-primary" @onclick="@(async e => {currentFaculty = x; await CloseAllDialogs();})">@x.FacultyName</button>
+                <button class="btn btn-primary" @onclick="@(async e => {await DeleteFacultie(x);})">-</button>
             </div>
         }
         <div><button class="btn btn-primary" @onclick="@OpenAddFacultyForm">Add new</button></div>
@@ -45,7 +45,8 @@
         @foreach (var x in departments ?? new List<Department>())
         {
             <div>
-                <button class="btn btn-primary" @onclick="@(e => {currentDepartment = x; CloseAllDialogs();})">@x.FullName</button>
+                <button class="btn btn-primary" @onclick="@(async e => {currentDepartment = x; await CloseAllDialogs();})">@x.FullName</button>
+                <button class="btn btn-primary" @onclick="@(async e => {await DeleteDepartment(x);})">-</button>
             </div>
         }
         <div><button class="btn btn-primary" @onclick="@OpenAddDepartmentForm">Add new</button></div>
@@ -125,12 +126,14 @@
     protected async Task LoadFaculties()
     {
         persistingSubscription = PersistentComponentState.RegisterOnPersisting(PersistDataFaculties);
+        faculties = null;
 
         if (!PersistentComponentState.TryTakeFromJson<List<Faculty>>(nameof(faculties), out faculties))
         {
             faculties = await FacultyService.GetFaculties();
         }
 
+        StateHasChanged();
         await jsRuntime.InvokeVoidAsync("OpenFaculty");
     }
 
@@ -144,9 +147,12 @@
         await jsRuntime.InvokeVoidAsync("AddDepartmentForm");
     }
 
-    protected void DeleteFacultie(long id)
+    protected async Task DeleteFacultie(Faculty faculty)
     {
+        await FacultyService.DeleteFaculty(faculty.Id);
+        await LoadFaculties();
 
+        await jsRuntime.InvokeVoidAsync("OpenFaculty");
     }
 
     protected async void AddFacultie()
@@ -165,18 +171,23 @@
     protected async Task LoadDepartments()
     {
         persistingSubscription = PersistentComponentState.RegisterOnPersisting(PersistDataDepartments);
+        departments = null;
 
         if (!PersistentComponentState.TryTakeFromJson<List<Department>>(nameof(departments), out departments))
         {
             departments = await FacultyService.GetDepartments();
         }
 
+        StateHasChanged();
         await jsRuntime.InvokeVoidAsync("OpenDepartment");
     }
 
-    protected void DeleteDepartment(long id)
+    protected async Task DeleteDepartment(Department department)
     {
+        await FacultyService.DeleteDepartment(department.Id);
+        await LoadDepartments();
 
+        await jsRuntime.InvokeVoidAsync("OpenDepartment");
     }
 
     protected async Task AddDepartment()
@@ -194,9 +205,9 @@
         }
     }
 
-    protected void BackToMarks()
+    protected void Back()
     {
-        RedirectTo("marks");
+        RedirectTo("students");
     }
 
     protected async Task AddStudent()
@@ -211,7 +222,7 @@
                 FacultyId = currentFaculty.Id,
                 DepartmentId = currentDepartment.Id,
             });
-            BackToMarks();
+            Back();
         }
     }
 

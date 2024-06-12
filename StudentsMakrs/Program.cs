@@ -35,6 +35,7 @@ public static class Program
         builder.Services.AddScoped<IdentityUserAccessor>();
         builder.Services.AddScoped<IdentityRedirectManager>();
         builder.Services.AddScoped<AuthenticationStateProvider, PersistingRevalidatingAuthenticationStateProvider>();
+        builder.Services.AddControllersWithViews();
 
         builder.Services.AddAuthentication(options =>
             {
@@ -42,6 +43,37 @@ public static class Program
                 options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
             })
             .AddIdentityCookies();
+
+        //builder.Services.AddCors(
+        //    options =>
+        //    {
+        //        options.AddPolicy("Admin", policy =>
+        //        {
+        //            policy.AllowAnyMethod();
+        //            policy.AllowAnyOrigin();
+        //            policy.AllowAnyHeader();
+        //        });
+        //        options.AddPolicy("Student", policy =>
+        //        {
+        //            policy.AllowAnyMethod();
+        //            policy.AllowAnyOrigin();
+        //            policy.AllowAnyHeader();
+        //        });
+        //        options.AddPolicy("User", policy =>
+        //        {
+        //            policy.AllowAnyMethod();
+        //            policy.AllowAnyOrigin();
+        //            policy.AllowAnyHeader();
+        //        });
+        //    }
+        //);
+
+        //builder.Services.AddAuthorization(options =>
+        //{
+        //    options.AddPolicy("AdminOnly", policy => policy.RequireClaim("Admin"));
+        //    options.AddPolicy("StudentOnly", policy => policy.RequireClaim("Student"));
+        //    options.AddPolicy("UserOnly", policy => policy.RequireClaim("User"));
+        //});
 
         var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -56,6 +88,8 @@ public static class Program
         builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
         builder.Services.AddSingleton<IStudentService, StudentServiceServer>();
         builder.Services.AddSingleton<IFacultyService, FacultyServiceServer>();
+        builder.Services.AddSingleton<ISubjectService, SubjectServiceServer>();
+        builder.Services.AddSingleton<IMarksService, MarkServiceServer>();
 
         var app = builder.Build();
 
@@ -94,17 +128,37 @@ public static class Program
         app.MapDelete("/Students/Delete/{id}", (string id, IStudentService service) => service.DeleteStudent(id));
 
         app.MapPost("/Students/Post", (IStudentService service, Student student) => service.PostStudent(student));
+        app.MapPut("/Students/Put", (IStudentService service, Student student) => service.PutStudent(student));
+
+        app.MapGet("/Students/All", (IStudentService service) => service.GetStudents());
+        app.MapGet("/Students/Get/{id}", (string id, IStudentService service) => service.GetStudent(id));
+
         app.MapPost("/Department/Post", (IFacultyService service, Department department) => service.PostDepartment(department));
         app.MapPost("/Faculty/Post", (IFacultyService service, Faculty department) => service.PostFaculty(department));
 
         app.MapGet("/Department/All", (IFacultyService service) => service.GetDepartments());
         app.MapGet("/Faculty/All", (IFacultyService service) => service.GetFaculties());
-        app.MapGet("/Students/All", (IStudentService service) => service.GetStudents());
 
-        app.MapGet("/Students/Get/{id}", (string id, IStudentService service) => service.GetStudent(id));
+        app.MapDelete("/Department/Delete/{id}", (IFacultyService service, int id) => service.DeleteDepartment(id));
+        app.MapDelete("/Faculty/Delete/{id}", (IFacultyService service, int id) => service.DeleteFaculty(id));
+
+        app.MapPost("/Subject/Post", (ISubjectService service, Subject subject) => service.Post(subject));
+        app.MapGet("/Subject/All", (ISubjectService service) => service.Gets());
+
+        app.MapPost("/Marks/Post", (IMarksService service, Mark mark) => service.PostMark(mark));
+        app.MapGet("/Marks/All", (IMarksService service) => service.GetMarks());
+
+        app.MapDelete("/Subject/Delete/{t}", (ISubjectService service, int t) => service.Delete(t));
+        app.MapDelete("/Marks/Delete/{t}", (IMarksService service, int t) => service.DeleteMark(t));
+
+        app.MapPost("/Students/{subject}/AddSubject", (IStudentService service, int subject, Student student) => service.AddSubjectToStudent(student, subject));
+        app.MapPost("/Students/{subject}/DeleteSubject/{student}", (IStudentService service, int subject, string student) => service.RemoveSubject(student, subject));
 
         // Add additional endpoints required by the Identity /Account Razor components.
         app.MapAdditionalIdentityEndpoints();
+
+        //app.UseAuthentication();
+        //app.UseAuthorization();
 
         application = app;
 

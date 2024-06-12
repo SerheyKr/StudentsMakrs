@@ -19,6 +19,7 @@ namespace StudentsMakrs.Client.Models
         public int DepartmentId { get; set; }
         public virtual Department Department { get; set; }
         public virtual List<Mark> Marks { get; set; }
+        [JsonIgnore]
         public virtual List<StudentSubject> StudentSubjects { get; set; }
         public virtual List<Subject> Subjects { get; set; }
     }

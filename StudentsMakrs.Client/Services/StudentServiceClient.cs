@@ -7,10 +7,22 @@ namespace StudentsMakrs.Client.Services
 {
     public class StudentServiceClient(HttpClient httpClient) : IStudentService
     {
+        public async Task<IActionResult> RemoveSubject(string student, int subject)
+        {
+            await httpClient.DeleteAsync($"/Students/{subject}/DeleteSubject/{student}");
+            return new OkResult();
+        }
+
+        public async Task<IActionResult> AddSubjectToStudent(Student student, int subject)
+        {
+            await httpClient.PostAsJsonAsync($"/Students/{subject}/AddSubject", student);
+            return new OkResult();
+        }
+
         public async Task<IActionResult> DeleteStudent(string student)
         {
             await httpClient.DeleteAsync($"/Students/Delete/{student}");
-            throw new NotImplementedException();
+            return new OkResult();
         }
 
         public async Task<Student> GetStudent(string ID)
@@ -29,9 +41,10 @@ namespace StudentsMakrs.Client.Services
             return new OkResult();
         }
 
-        public Task<IActionResult> PutStudent(Student student)
+        public async Task<IActionResult> PutStudent(Student student)
         {
-            throw new NotImplementedException();
+            await httpClient.PutAsJsonAsync("/Students/Put", student);
+            return new OkResult();
         }
     }
 }

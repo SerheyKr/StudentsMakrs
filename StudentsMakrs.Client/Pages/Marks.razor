@@ -1,4 +1,4 @@
-﻿@page "/marks"
+﻿@page "/students"
 @using StudentsMakrs.Client.Interfaces
 @using StudentsMakrs
 @using StudentsMakrs.Client.Models
@@ -10,9 +10,9 @@
 @attribute [StreamRendering]
 @rendermode InteractiveAuto
 
-<PageTitle>Marks</PageTitle>
+<PageTitle>Students</PageTitle>
 
-<h1>Marks</h1>
+<h1>Students</h1>
 
 @* <p>This component demonstrates showing data.</p> *@
 
@@ -75,6 +75,12 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        await UpdateData();
+    }
+
+    protected async Task UpdateData()
+    {
+        students = null;
         persistingSubscription = PersistentComponentState.RegisterOnPersisting(PersistData);
 
         if (!PersistentComponentState.TryTakeFromJson<List<Student>>(nameof(students), out students))
@@ -85,7 +91,7 @@ else
 
     protected void AddNewStudent(MouseEventArgs mouseEventArgs)
     {
-        RedirectTo("marks/addStudent");
+        RedirectTo("students/addStudent");
     }
 
     protected async Task ToDetails(string id)
@@ -97,6 +103,7 @@ else
     protected async Task DeleteStudent(string id)
     { 
         await StudentService.DeleteStudent(id);
+        await UpdateData();
     }
 
     public void RedirectTo(string? uri)

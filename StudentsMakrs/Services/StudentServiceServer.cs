@@ -7,14 +7,45 @@ namespace StudentsMakrs.Services
 {
     public class StudentServiceServer : IStudentService
     {
-        public Task<IActionResult> DeleteStudent(string student)
+        public async Task<IActionResult> RemoveSubject(string student, int subject)
         {
-            throw new NotImplementedException();
+            var context = Program.GetDBContext();
+            var toDelete = await context.StudentSubjects.Where(x => x.SubjectIdSec == subject && x.StudentIdSec == student).FirstAsync();
+            context.StudentSubjects.Remove(toDelete);
+            await context.SaveChangesAsync();
+
+            return new OkResult();
         }
 
-        public Task<Student> GetStudent(string ID)
+        public async Task<IActionResult> AddSubjectToStudent(Student student, int subject)
         {
-            throw new NotImplementedException();
+            var context = Program.GetDBContext();
+            await context.StudentSubjects.AddAsync(new StudentSubject()
+            {
+                StudentIdSec = student.StudentID,
+                SubjectIdSec = subject,
+            });
+            await context.SaveChangesAsync();
+
+            return new OkResult();
+        }
+
+        public async Task<IActionResult> DeleteStudent(string student)
+        {
+            var context = Program.GetDBContext();
+            var std = await context.Students.FindAsync(student) ?? throw new ArgumentException($"Givend id is not finded {student}", nameof(student));
+            context.Students.Remove(std);
+            await context.SaveChangesAsync();
+
+            return new OkResult();
+        }
+
+        public async Task<Student> GetStudent(string ID)
+        {
+            var context = Program.GetDBContext();
+            var std = await context.Students.FindAsync(ID) ?? throw new ArgumentException($"Givend id is not finded {ID}", nameof(ID));
+
+            return std;
         }
 
         public async Task<List<Student>> GetStudents()
@@ -31,15 +62,20 @@ namespace StudentsMakrs.Services
             student.StudentID = Guid.NewGuid().ToString();
             student.StudentPassword = Guid.NewGuid().ToString().Replace("-", "");
 
-            await context.AddAsync(student);
+            await context.Students.AddAsync(student);
             await context.SaveChangesAsync();
 
             return new OkObjectResult(student);
         }
 
-        public Task<IActionResult> PutStudent(Student student)
+        public async Task<IActionResult> PutStudent(Student student)
         {
-            throw new NotImplementedException();
+            var context = Program.GetDBContext();
+
+            context.Students.Update(student);
+            await context.SaveChangesAsync();
+
+            return new OkObjectResult(student);
         }
     }
 }

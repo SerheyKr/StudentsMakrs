@@ -21,6 +21,8 @@ namespace StudentsMakrs.Client
             builder.Services.AddSingleton<AuthenticationStateProvider, PersistentAuthenticationStateProvider>();
             builder.Services.AddSingleton<IStudentService, StudentServiceClient>();
             builder.Services.AddSingleton<IFacultyService, FacultyServiceClient>();
+            builder.Services.AddSingleton<ISubjectService, SubjectServiceClient>();
+            builder.Services.AddSingleton<IMarksService, MarkServiceClient>();
 
 
             await builder.Build().RunAsync();
