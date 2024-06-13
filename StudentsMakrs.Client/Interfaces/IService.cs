@@ -11,4 +11,13 @@ namespace StudentsMakrs.Client.Interfaces
         Task<IActionResult> Put(T t);
         Task<IActionResult> Delete(int t);
     }
+
+    public interface IServiceString<T> where T : class
+    {
+        Task<T> Get(string ID);
+        Task<List<T>> Gets();
+        Task<IActionResult> Post(T t);
+        Task<IActionResult> Put(T t);
+        Task<IActionResult> Delete(string t);
+    }
 }

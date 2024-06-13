@@ -1,7 +1,7 @@
 {
   "mainAssemblyName": "StudentsMakrs.Client",
   "resources": {
-    "hash": "sha256-BlhKVTnIyaxGPuP5FlcG4Q6e6bsvjJ2pF0VzYdGjDnA=",
+    "hash": "sha256-AzDpEThNOCZQeysOvWLE1x5+Jol6Jy8U+GWMAQJvEYY=",
     "jsModuleNative": {
       "dotnet.native.8.0.3.w0hzm18ckc.js": "sha256-D4sYBYmDfH/YekgYRgX959/2RG6k28sJSHmcsn+iikk="
     },
@@ -260,10 +260,10 @@
       "mscorlib.wasm": "sha256-/xjZuJwCmantx5vGyH5ZZ8keySSTeu+YHKQRJbZzcuM=",
       "netstandard.wasm": "sha256-vuFKmCGJbyv85DrzI6S1ZvCikuhIllH6hqbXIL+fUAA=",
       "System.Private.CoreLib.wasm": "sha256-SZkozEDkHEFN0VaDmhl2HOenGaqTOmHqEGkraz3Aejc=",
-      "StudentsMakrs.Client.wasm": "sha256-q1jY31FqW9PWEoEt+WxidjhCmoqyuHWk4qUM0btN5mw="
+      "StudentsMakrs.Client.wasm": "sha256-GQ811x9RjXHE2YsL2H3CC4OrvNIfa1fvCBEpvY2Kieo="
     },
     "pdb": {
-      "StudentsMakrs.Client.pdb": "sha256-BIp1+zhbxRHmSyUmhm+RRcKjRkCmVK5LjybmFlqAomg="
+      "StudentsMakrs.Client.pdb": "sha256-aWYBRCWhERV9U10VCWxz52hp9YrMsRSDqOhLMDNAcqs="
     }
   },
   "cacheBootResources": true,

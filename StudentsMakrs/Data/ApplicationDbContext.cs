@@ -5,7 +5,7 @@ using System.Reflection.Emit;
 
 namespace StudentsMakrs.Data
 {
-	public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser>(options)
+	public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>(options)
 	{
 		public DbSet<Student> Students { get; set; }
 		public DbSet<Faculty> Faculties { get; set; }

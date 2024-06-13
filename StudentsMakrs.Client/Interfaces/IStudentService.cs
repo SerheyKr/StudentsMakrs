@@ -6,6 +6,7 @@ namespace StudentsMakrs.Client.Interfaces
     public interface IStudentService
     {
         Task<Student> GetStudent(string ID);
+        Task<Student?> GetStudentAnon(CertificateData certificateData);
         Task<List<Student>> GetStudents();
         Task<IActionResult> PostStudent(Student student);
         Task<IActionResult> PutStudent(Student student);

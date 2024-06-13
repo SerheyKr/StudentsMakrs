@@ -77,5 +77,21 @@ namespace StudentsMakrs.Services
 
             return new OkObjectResult(student);
         }
+
+        public async Task<Student?> GetStudentAnon(CertificateData certificateData)
+        {
+            var context = Program.GetDBContext();
+            var ID = certificateData.ID;
+            //var std = await context.Students.Where(x => x.StudentID == ID).FirstAsync() ?? throw new ArgumentException($"Givend id is not finded {ID}", nameof(ID));
+            var std = await context.Students.FindAsync(ID) ?? throw new ArgumentException($"Givend id is not finded {ID}", nameof(ID));
+            std.StudentPassword = "";
+
+            if (certificateData.Password != std.StudentPassword)
+            {
+                return null;
+            }
+
+            return std;
+        }
     }
 }

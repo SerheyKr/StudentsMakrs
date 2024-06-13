@@ -10,6 +10,8 @@
 @inject IJSRuntime jsRuntime
 @implements IDisposable
 @attribute [StreamRendering]
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize("Admin")]
 @rendermode InteractiveAuto
 
 <PageTitle>Add Student</PageTitle>

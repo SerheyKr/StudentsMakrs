@@ -3,22 +3,37 @@
 @using StudentsMakrs
 @using StudentsMakrs.Client.Models
 @inject IJSRuntime JS
+@inject IUserService UserService
 @inject IStudentService StudentService
 @inject PersistentComponentState PersistentComponentState
 @inject NavigationManager navigationManager
 @attribute [StreamRendering]
 @rendermode InteractiveAuto
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize("Admin")]
 
-<PageTitle>Student Details</PageTitle>
-<h1>Student Details</h1>
+<PageTitle>User Details</PageTitle>
+<h1>User Details</h1>
 
-<input type="text" value="" placeholder="Input student ID" />
-<button class="btn btn-primary">Find student</button>
+@if (users == null)
+{
+    <text>Loading...</text>
+} else
+{
+    
+}
 
 @code {
+    private List<User>? users;
 
     protected override async Task OnInitializedAsync()
     {
-        
+        await LoadUsers();
+    }
+
+    protected async Task LoadUsers()
+    {
+        users = await UserService.Gets();
+        StateHasChanged();
     }
 }

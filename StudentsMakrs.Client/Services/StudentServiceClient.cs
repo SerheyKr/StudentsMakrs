@@ -46,5 +46,10 @@ namespace StudentsMakrs.Client.Services
             await httpClient.PutAsJsonAsync("/Students/Put", student);
             return new OkResult();
         }
+
+        public async Task<Student?> GetStudentAnon(CertificateData certificateData)
+        {
+            return await httpClient.GetFromJsonAsync<Student>($"/Certificate/Get/{certificateData.ID}/{certificateData.Password}") ?? throw new InvalidProgramException();
+        }
     }
 }

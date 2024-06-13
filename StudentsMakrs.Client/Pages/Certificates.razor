@@ -1,22 +1,149 @@
 ﻿@page "/certificates"
+@using StudentsMakrs.Client.Interfaces
+@using StudentsMakrs
+@using StudentsMakrs.Client.Models
+@inject IStudentService StudentService
+@inject ISubjectService SubjectService
+@inject IMarksService MarksService
+@inject PersistentComponentState PersistentComponentState
+@inject NavigationManager navigationManager
+@inject IJSRuntime jsRuntime
+@attribute [StreamRendering]
 @rendermode InteractiveAuto
+@using Microsoft.AspNetCore.Authorization
 
-<PageTitle>Certificates</PageTitle>
+<PageTitle>Certificate</PageTitle>
+<h1>Certificate</h1>
 
-<h1>Certificates</h1>
+<p><em>Input student password and id</em></p>
+<input @bind="@ID" placeholder="ID" />
+<input @bind="@Password" placeholder="Password" />
+<button @onclick="@LoadStudent">Find</button>
 
-<input type="text" value="" placeholder="Input your id" />
+@if (student != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Full name</th>
+                <th>Faculty</th>
+                <th>Department</th>
+                <th>Average mark</th>
+                <th>Total marks count</th>
+                <th>Student ID</th>
+                <th>Student Password</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    @student.FullName
+                </td>
+                <td>@student.Faculty.FacultyName</td>
+                <td>@($"{student.Department.DepartmentName}-{student.Department.BranchName}") </td>
+                <td>@(student.Marks.Sum(x => x.CurrentMark) / Math.Max(1, student.Marks.Count))</td>
+                <td>@student.Marks.Count</td>
+                <td>@student.StudentID</td>
+            </tr>
+        </tbody>
+    </table>
+    <h1>Marks</h1>
 
-<input type="text" value="" placeholder="Input your password" />
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Subject</th>
+                <th>Mark</th>
+                <th>Mark in 5 point system</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var mark in student.Marks.OrderBy(x => x.Subject))
+            {
+                <tr>
+                    @if (subjects == null)
+                    {
+                        <th>Loading...</th>
+                    }
+                    else
+                    {
+                        <th>@(subjects!.Find(x => x.Id == mark.SubjectId)!.Name)</th>
+                        <th>@mark.CurrentMark</th>
+                        <th>@(Math.Round(mark.CurrentMark / 100f * 5f))</th>
+                        <th>@mark.MarkDate.ToLongDateString()</th>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+    <h1>Subjects</h1>
 
-
-<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
-
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Subject name</th>
+                <th>Average mark</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var subject in student.Subjects)
+            {
+                <tr>
+                    <th>@subject.Name</th>
+                    @if (student.Marks.FindAll(x => x.SubjectId == subject.Id).Count > 0)
+                    {
+                        <th>
+                            @((student.Marks.FindAll(x => x.SubjectId == subject.Id)).Sum(x => x.CurrentMark) /
+                                (student.Marks.FindAll(x => x.SubjectId == subject.Id).Count()))
+                        </th>
+                    }
+                    else
+                    {
+                        <th>No marks</th>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+}
 @code {
-    private int currentCount = 0;
+    private Student? student;
+    private List<Subject>? subjects;
+    [SupplyParameterFromQuery]
+    private string? ID { get; set; }
+    private string? Password { get; set; }
 
-    private void IncrementCount()
+    protected override async Task OnInitializedAsync()
     {
-        currentCount++;
+        
+    }
+
+    protected async Task LoadStudent()
+    {
+        if (ID != null && Password != null)
+        {
+            student = await StudentService.GetStudentAnon(new CertificateData()
+            {
+                ID = ID,
+                Password = Password,
+            });
+            await LoadSubjectData();
+            StateHasChanged();
+        }
+    }
+
+    protected async Task LoadStudentData()
+    {
+        student = null;
+        if (!string.IsNullOrEmpty(ID))
+            student = await StudentService.GetStudent(ID);
+        StateHasChanged();
+    }
+
+    protected async Task LoadSubjectData()
+    {
+        subjects = await SubjectService.Gets();
+        StateHasChanged();
     }
 }

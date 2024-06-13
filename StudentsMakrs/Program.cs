@@ -29,10 +29,16 @@ public static class Program
         return services.GetRequiredService<IEmailSender>();
     }
 
-    private static void Main(string[] args)
+    private static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
 
+        //builder.Services.AddRazorPages(options =>
+        //{
+        //    options.Conventions.AllowAnonymousToPage("/Account/Login");
+        //    options.Conventions.AllowAnonymousToPage("/Account/Register");
+        //    options.Conventions.AuthorizeFolder("/students", "Admin");
+        //});
 
         // Add services to the container.
         builder.Services.AddRazorComponents()
@@ -61,36 +67,11 @@ public static class Program
             })
             .AddIdentityCookies();
 
-        //builder.Services.AddCors(
-        //    options =>
-        //    {
-        //        options.AddPolicy("Admin", policy =>
-        //        {
-        //            policy.AllowAnyMethod();
-        //            policy.AllowAnyOrigin();
-        //            policy.AllowAnyHeader();
-        //        });
-        //        options.AddPolicy("Student", policy =>
-        //        {
-        //            policy.AllowAnyMethod();
-        //            policy.AllowAnyOrigin();
-        //            policy.AllowAnyHeader();
-        //        });
-        //        options.AddPolicy("User", policy =>
-        //        {
-        //            policy.AllowAnyMethod();
-        //            policy.AllowAnyOrigin();
-        //            policy.AllowAnyHeader();
-        //        });
-        //    }
-        //);
-
-        //builder.Services.AddAuthorization(options =>
-        //{
-        //    options.AddPolicy("AdminOnly", policy => policy.RequireClaim("Admin"));
-        //    options.AddPolicy("StudentOnly", policy => policy.RequireClaim("Student"));
-        //    options.AddPolicy("UserOnly", policy => policy.RequireClaim("User"));
-        //});
+        builder.Services.AddAuthorization(options =>
+        {
+            options.AddPolicy("Admin", policy => policy.RequireRole("Admin"));
+            options.AddPolicy("Student", policy => policy.RequireRole("Student"));
+        });
 
         var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -98,6 +79,7 @@ public static class Program
         builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
         builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            .AddRoles<ApplicationRole>()
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddSignInManager()
             .AddDefaultTokenProviders();
@@ -130,9 +112,28 @@ public static class Program
             var context = services.GetRequiredService<ApplicationDbContext>();
             //context.Database.EnsureDeleted();
             context.Database.EnsureCreated();
+
+            context.SaveChanges();
+            var roleManager = services.GetRequiredService<RoleManager<ApplicationRole>>();
+
+            var roles = new[] { "Admin", "Student", "User" };
+
+            foreach (var role in roles)
+            {
+                if (await roleManager.FindByNameAsync(role) == null)
+                {
+                    await roleManager.CreateAsync(new ApplicationRole(){ Name = role });
+                }
+            }
+
+            var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+
+            await userManager.AddToRoleAsync(await userManager.FindByEmailAsync("sergey43433434@gmail.com"), "Admin");
         }
 
         app.UseHttpsRedirection();
+        app.UseAuthentication();
+        app.UseAuthorization();
 
         app.UseStaticFiles();
         app.UseAntiforgery();
@@ -142,43 +143,62 @@ public static class Program
             .AddInteractiveWebAssemblyRenderMode()
             .AddAdditionalAssemblies(typeof(StudentsMakrs.Client._Imports).Assembly);
 
-        app.MapDelete("/Students/Delete/{id}", (string id, IStudentService service) => service.DeleteStudent(id));
+        app.MapDelete("/Students/Delete/{id}", (string id, IStudentService service) => service.DeleteStudent(id))
+        .RequireAuthorization("Admin");
 
-        app.MapPost("/Students/Post", (IStudentService service, Student student) => service.PostStudent(student));
+        app.MapPost("/Students/Post", (IStudentService service, Student student) => service.PostStudent(student))
+        .RequireAuthorization("Admin");
         app.MapPut("/Students/Put", (IStudentService service, Student student) => service.PutStudent(student));
 
-        app.MapGet("/Students/All", (IStudentService service) => service.GetStudents());
-        app.MapGet("/Students/Get/{id}", (string id, IStudentService service) => service.GetStudent(id));
+        app.MapGet("/Students/All", (IStudentService service) => service.GetStudents())
+        .RequireAuthorization("Admin");
+        app.MapGet("/Students/Get/{id}", (string id, IStudentService service) => service.GetStudent(id))
+        .RequireAuthorization("Admin");
 
-        app.MapPost("/Department/Post", (IFacultyService service, Department department) => service.PostDepartment(department));
-        app.MapPost("/Faculty/Post", (IFacultyService service, Faculty department) => service.PostFaculty(department));
+        app.MapGet("/Certificate/Get/{ID}/{Password}", 
+        (string ID, string Password, IStudentService service) => service.GetStudentAnon(new CertificateData()
+        {
+            ID = ID,
+            Password = Password,
+        }));
+
+        app.MapPost("/Department/Post", (IFacultyService service, Department department) => service.PostDepartment(department))
+        .RequireAuthorization("Admin");
+        app.MapPost("/Faculty/Post", (IFacultyService service, Faculty department) => service.PostFaculty(department))
+        .RequireAuthorization("Admin");
 
         app.MapGet("/Department/All", (IFacultyService service) => service.GetDepartments());
         app.MapGet("/Faculty/All", (IFacultyService service) => service.GetFaculties());
 
-        app.MapDelete("/Department/Delete/{id}", (IFacultyService service, int id) => service.DeleteDepartment(id));
-        app.MapDelete("/Faculty/Delete/{id}", (IFacultyService service, int id) => service.DeleteFaculty(id));
+        app.MapDelete("/Department/Delete/{id}", (IFacultyService service, int id) => service.DeleteDepartment(id))
+        .RequireAuthorization("Admin");
+        app.MapDelete("/Faculty/Delete/{id}", (IFacultyService service, int id) => service.DeleteFaculty(id))
+        .RequireAuthorization("Admin");
 
-        app.MapPost("/Subject/Post", (ISubjectService service, Subject subject) => service.Post(subject));
+        app.MapPost("/Subject/Post", (ISubjectService service, Subject subject) => service.Post(subject))
+        .RequireAuthorization("Admin");
         app.MapGet("/Subject/All", (ISubjectService service) => service.Gets());
 
-        app.MapPost("/Marks/Post", (IMarksService service, Mark mark) => service.PostMark(mark));
+        app.MapPost("/Marks/Post", (IMarksService service, Mark mark) => service.PostMark(mark))
+        .RequireAuthorization("Admin");
         app.MapGet("/Marks/All", (IMarksService service) => service.GetMarks());
 
-        app.MapDelete("/Subject/Delete/{t}", (ISubjectService service, int t) => service.Delete(t));
-        app.MapDelete("/Marks/Delete/{t}", (IMarksService service, int t) => service.DeleteMark(t));
+        app.MapDelete("/Subject/Delete/{t}", (ISubjectService service, int t) => service.Delete(t))
+        .RequireAuthorization("Admin");
+        app.MapDelete("/Marks/Delete/{t}", (IMarksService service, int t) => service.DeleteMark(t))
+        .RequireAuthorization("Admin");
 
-        app.MapPost("/Students/{subject}/AddSubject", (IStudentService service, int subject, Student student) => service.AddSubjectToStudent(student, subject));
-        app.MapPut("/Students/{subject}/DeleteSubject", (IStudentService service, int subject, Student student) => service.RemoveSubject(student, subject));
+        app.MapPost("/Students/{subject}/AddSubject", (IStudentService service, int subject, Student student) => service.AddSubjectToStudent(student, subject))
+        .RequireAuthorization("Admin");
+        app.MapPut("/Students/{subject}/DeleteSubject", (IStudentService service, int subject, Student student) => service.RemoveSubject(student, subject))
+        .RequireAuthorization("Admin");
+
 
         // Add additional endpoints required by the Identity /Account Razor components.
         app.MapAdditionalIdentityEndpoints();
 
-        //app.UseAuthentication();
-        //app.UseAuthorization();
 
         application = app;
-
         app.Run();
     }
 }
