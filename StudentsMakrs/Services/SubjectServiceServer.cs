@@ -7,9 +7,16 @@ namespace StudentsMakrs.Services
 {
     public class SubjectServiceServer : ISubjectService
     {
-        public Task<IActionResult> Delete(int t)
+        public async Task<IActionResult> Delete(int t)
         {
-            throw new NotImplementedException();
+            var context = Program.GetDBContext();
+
+            var subj = await context.Subjects.FindAsync(t);
+
+            context.Subjects.Remove(subj);
+            await context.SaveChangesAsync();
+
+            return new OkResult();
         }
 
         public Task<Subject> Get(int ID)

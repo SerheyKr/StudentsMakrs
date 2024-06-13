@@ -7,10 +7,10 @@ namespace StudentsMakrs.Services
 {
     public class StudentServiceServer : IStudentService
     {
-        public async Task<IActionResult> RemoveSubject(string student, int subject)
+        public async Task<IActionResult> RemoveSubject(Student student, int subject)
         {
             var context = Program.GetDBContext();
-            var toDelete = await context.StudentSubjects.Where(x => x.SubjectIdSec == subject && x.StudentIdSec == student).FirstAsync();
+            var toDelete = await context.StudentSubjects.Where(x => x.SubjectIdSec == subject && x.StudentIdSec == student.StudentID).FirstAsync();
             context.StudentSubjects.Remove(toDelete);
             await context.SaveChangesAsync();
 

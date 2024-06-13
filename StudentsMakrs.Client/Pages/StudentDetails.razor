@@ -28,6 +28,7 @@
                 <th>Average mark</th>
                 <th>Total marks count</th>
                 <th>Student ID</th>
+                <th>Student Password</th>
             </tr>
         </thead>
         <tbody>
@@ -40,6 +41,7 @@
                 <td>@(student.Marks.Sum(x => x.CurrentMark) / Math.Max(1, student.Marks.Count))</td>
                 <td>@student.Marks.Count</td>
                 <td>@student.StudentID</td>
+                <td>@student.StudentPassword</td>
             </tr>
         </tbody>
     </table>
@@ -50,6 +52,7 @@
             <tr>
                 <th>Subject</th>
                 <th>Mark</th>
+                <th>Mark in 5 point system</th>
                 <th>Date</th>
             </tr>
         </thead>
@@ -64,7 +67,8 @@
                     {
                         <th>@(subjects!.Find(x => x.Id == mark.SubjectId)!.Name)</th>
                         <th>@mark.CurrentMark</th>
-                        <th>@mark.MarkDate.ToString()</th>
+                        <th>@(Math.Round(mark.CurrentMark / 100f * 5f))</th>
+                        <th>@mark.MarkDate.ToLongDateString()</th>
                         <th><button class="btn btn-primary" @onclick="@(e => RemoveStudentMark(mark))">-</button></th>
                     }
                 </tr>
@@ -205,7 +209,7 @@
 
     private List<Subject>? subjects;
     private Subject? subjectSelectorMarkForm;
-    private DateTime? addMarkTime = DateTime.Now;
+    private DateTime? addMarkTime = DateTime.Today;
     private int? addMarkMark;
 
     protected override async Task OnInitializedAsync()
@@ -304,7 +308,7 @@
     {
         if (student == null)
             return;
-        await StudentService.RemoveSubject(student.StudentID, subject.Id);
+        await StudentService.RemoveSubject(student, subject.Id);
 
         await jsRuntime.InvokeVoidAsync("CloseAllDialogs");
         await LoadStudentData();

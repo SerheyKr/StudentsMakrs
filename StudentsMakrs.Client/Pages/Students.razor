@@ -1,0 +1,247 @@
+﻿@page "/students"
+@using StudentsMakrs.Client.Interfaces
+@using StudentsMakrs.Client.Models
+@using StudentsMakrs.Client.Services
+@using StudentsMakrs
+@implements IDisposable
+@inject IJSRuntime jsRuntime
+@inject IStudentService StudentService
+@inject IFacultyService FacultyService
+@inject PersistentComponentState PersistentComponentState
+@inject NavigationManager navigationManager
+@attribute [StreamRendering]
+@rendermode InteractiveAuto
+
+<PageTitle>Students</PageTitle>
+
+<h1>Students</h1>
+
+@* <p>This component demonstrates showing data.</p> *@
+
+@if (students == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Full name</th>
+                <th><button class="btn btn-primary" @onclick="@OpenFaculties">
+                    @if (currentFaculty == null)
+                        {
+                            <text>
+                                Faculty
+                            </text>
+                        } else
+                        {
+                            @currentFaculty.FacultyName
+                        }
+                    </button></th>
+                <th>
+                    <button class="btn btn-primary" @onclick="@OpenDepartments">
+                        @if (currentDepartment == null)
+                        {
+                            <text>
+                                Department
+                            </text>
+                        }
+                        else
+                        {
+                            @currentDepartment.FullName
+                        }
+                    </button></th>
+                <th>Average mark</th>
+                <th>Total marks count</th>
+                <th>Student ID</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var student in GetStudents())
+            {
+                <tr>
+                    <td>
+                        @student.FullName
+                    </td>
+                    <td>@student.Faculty.FacultyName</td>
+                    <td>@($"{student.Department.DepartmentName}-{student.Department.BranchName}") </td>
+                    <td>@(student.Marks.Sum(x => x.CurrentMark) / Math.Max(1, student.Marks.Count))</td>
+                    <td>@student.Marks.Count</td>
+                    <td>@student.StudentID</td>
+                    <td align="right"><button class="btn btn-primary" @onclick="() => ToDetails(student.StudentID)">Details</button></td>
+                    <td align="right"><button class="btn btn-primary" @onclick="() => DeleteStudent(student.StudentID)">-</button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    @* onclick = "userdetails.open();" *@
+
+    <button class="btn btn-primary" type="submit" @onclick="@AddNewStudent">
+        Add new student
+    </button>
+}
+
+<paper-dialog elevation=3 align="center" id="faculty" class="paper-dialog-block vis-hiden" aria-hidden="true">
+    <h2>Faculty</h2>
+    <paper-dialog-scrollable class="vis-hiden paper-block">
+        @foreach (var x in faculties ?? new List<Faculty>())
+        {
+            <div>
+                <button class="btn btn-primary" @onclick="@(async e => {currentFaculty = x; await CloseAllDialogs();})">@x.FacultyName</button>
+            </div>
+        }
+        <div><button class="btn btn-primary" @onclick="@(async e => {currentFaculty = null; await CloseAllDialogs();})">All</button></div>
+    </paper-dialog-scrollable>
+</paper-dialog>
+
+<paper-dialog elevation=3 align="center" id="department" class="paper-dialog-block vis-hiden" aria-hidden="true">
+    <h2>Department</h2>
+    <paper-dialog-scrollable class="vis-hiden paper-block">
+        @foreach (var x in departments ?? new List<Department>())
+        {
+            <div>
+                <button class="btn btn-primary" @onclick="@(async e => {currentDepartment = x; await CloseAllDialogs();})">@x.FullName</button>
+            </div>
+        }
+        <div><button class="btn btn-primary" @onclick="@(async e => {currentDepartment = null; await CloseAllDialogs();})">All</button></div>
+    </paper-dialog-scrollable>
+</paper-dialog>
+
+<script>
+    function OpenFaculty() {
+        CloseAllDialogs();
+        faculty.open();
+    }
+    function OpenDepartment() {
+        CloseAllDialogs();
+        department.open();
+    }
+
+    function CloseAllDialogs() {
+        faculty.close();
+        department.close();
+    }
+</script>
+
+@code {
+    private List<Student>? students;
+    private List<Faculty>? faculties;
+    private List<Department>? departments;
+    private PersistingComponentStateSubscription persistingSubscription;
+
+    private Faculty? currentFaculty;
+    private Department? currentDepartment;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await UpdateData();
+        await LoadFaculties();
+        await LoadDepartments();
+    }
+
+    protected async Task CloseAllDialogs()
+    {
+        await jsRuntime.InvokeVoidAsync("CloseAllDialogs");
+    }
+
+    protected List<Student> GetStudents()
+    {
+        if (students == null)
+            return null;
+        var toReturn = new List<Student>(students);
+        if (currentFaculty != null)
+        {
+            toReturn = toReturn.Where(x => x.FacultyId == currentFaculty.Id).ToList();
+        } 
+        if (currentDepartment != null)
+        {
+            toReturn = toReturn.Where(x => x.DepartmentId == currentDepartment.Id).ToList();
+        }
+        toReturn = toReturn.OrderBy(x => x.Department.FullName).ToList();
+        return toReturn;
+    }
+
+    protected async Task OpenFaculties()
+    {
+        await LoadFaculties();
+        await jsRuntime.InvokeVoidAsync("OpenFaculty");
+    }
+
+    protected async Task OpenDepartments()
+    {
+        await LoadDepartments();
+        await jsRuntime.InvokeVoidAsync("OpenDepartment");
+
+    }
+
+    protected async Task LoadFaculties()
+    {
+        faculties = null;
+
+        faculties = await FacultyService.GetFaculties();
+
+        StateHasChanged();
+    }
+
+    protected async Task LoadDepartments()
+    {
+        departments = null;
+
+        departments = await FacultyService.GetDepartments();
+
+        StateHasChanged();
+    }
+
+    protected async Task UpdateData()
+    {
+        students = null;
+        persistingSubscription = PersistentComponentState.RegisterOnPersisting(PersistData);
+
+        if (!PersistentComponentState.TryTakeFromJson<List<Student>>(nameof(students), out students))
+        {
+            students = await StudentService.GetStudents();
+        }
+    }
+
+    protected void AddNewStudent(MouseEventArgs mouseEventArgs)
+    {
+        RedirectTo("students/addStudent");
+    }
+
+    protected async Task ToDetails(string id)
+    {
+        var path = navigationManager.GetUriWithQueryParameters("studentDetails", new Dictionary<string, object?> { ["id"] = id });
+        navigationManager.NavigateTo(path);
+    }
+
+    protected async Task DeleteStudent(string id)
+    { 
+        await StudentService.DeleteStudent(id);
+        await UpdateData();
+    }
+
+    public void RedirectTo(string? uri)
+    {
+        uri ??= "";
+
+        // Prevent open redirects.
+        if (!Uri.IsWellFormedUriString(uri, UriKind.Relative))
+        {
+            uri = navigationManager.ToBaseRelativePath(uri);
+        }
+
+        // During static rendering, NavigateTo throws a NavigationException which is handled by the framework as a redirect.
+        // So as long as this is called from a statically rendered Identity component, the InvalidOperationException is never thrown.
+        navigationManager.NavigateTo(uri);
+    }
+
+    private Task PersistData()
+    {
+        PersistentComponentState.PersistAsJson(nameof(students), students);
+
+        return Task.CompletedTask;
+    }
+
+    void IDisposable.Dispose() => persistingSubscription.Dispose();
+}

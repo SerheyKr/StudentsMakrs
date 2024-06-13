@@ -7,9 +7,15 @@ namespace StudentsMakrs.Services
 {
     public class MarkServiceServer : IMarksService
     {
-        public Task<IActionResult> DeleteMark(int t)
+        public async Task<IActionResult> DeleteMark(int t)
         {
-            throw new NotImplementedException();
+            var context = Program.GetDBContext();
+
+            var mark = await context.Marks.FindAsync(t);
+            context.Marks.Remove(mark);
+            await context.SaveChangesAsync();
+
+            return new OkObjectResult(t);
         }
 
         public Task<Mark> GetMark(int ID)

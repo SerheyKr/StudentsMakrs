@@ -178,3 +178,5 @@ C:\Users\serge\source\repos\StudentsMakrs\StudentsMakrs\StudentsMakrs\bin\Debug\
 C:\Users\serge\source\repos\StudentsMakrs\StudentsMakrs\StudentsMakrs\bin\Debug\net8.0\Castle.Core.dll
 C:\Users\serge\source\repos\StudentsMakrs\StudentsMakrs\StudentsMakrs\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Proxies.dll
 C:\Users\serge\source\repos\StudentsMakrs\StudentsMakrs\StudentsMakrs\obj\Debug\net8.0\StudentsMakrs.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\serge\source\repos\StudentsMakrs\StudentsMakrs\StudentsMakrs\bin\Debug\net8.0\SendGrid.dll
+C:\Users\serge\source\repos\StudentsMakrs\StudentsMakrs\StudentsMakrs\bin\Debug\net8.0\StarkbankEcdsa.dll

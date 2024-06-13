@@ -7,9 +7,9 @@ namespace StudentsMakrs.Client.Services
 {
     public class StudentServiceClient(HttpClient httpClient) : IStudentService
     {
-        public async Task<IActionResult> RemoveSubject(string student, int subject)
+        public async Task<IActionResult> RemoveSubject(Student student, int subject)
         {
-            await httpClient.DeleteAsync($"/Students/{subject}/DeleteSubject/{student}");
+            await httpClient.PutAsJsonAsync($"/Students/{subject}/DeleteSubject", student);
             return new OkResult();
         }
 

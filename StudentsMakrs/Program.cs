@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using StudentsMakrs.Client.Interfaces;
 using StudentsMakrs.Client.Models;
@@ -20,6 +21,13 @@ public static class Program
 
         return services.GetRequiredService<ApplicationDbContext>();
     }
+    public static IEmailSender GetEmailSender()
+    {
+        var scope = application.Services.CreateAsyncScope();
+        var services = scope.ServiceProvider;
+        
+        return services.GetRequiredService<IEmailSender>();
+    }
 
     private static void Main(string[] args)
     {
@@ -31,11 +39,20 @@ public static class Program
             .AddInteractiveServerComponents()
             .AddInteractiveWebAssemblyComponents();
 
+        builder.Services.ConfigureApplicationCookie(o => {
+            o.ExpireTimeSpan = TimeSpan.FromDays(5);
+            o.SlidingExpiration = true;
+        }); 
+        builder.Services.Configure<DataProtectionTokenProviderOptions>(o =>
+       o.TokenLifespan = TimeSpan.FromHours(3));
         builder.Services.AddCascadingAuthenticationState();
         builder.Services.AddScoped<IdentityUserAccessor>();
         builder.Services.AddScoped<IdentityRedirectManager>();
         builder.Services.AddScoped<AuthenticationStateProvider, PersistingRevalidatingAuthenticationStateProvider>();
         builder.Services.AddControllersWithViews();
+
+        builder.Services.AddScoped<IEmailSender, EmailSender>();
+        builder.Services.Configure<AuthMessageSenderOptions>(builder.Configuration);
 
         builder.Services.AddAuthentication(options =>
             {
@@ -152,7 +169,7 @@ public static class Program
         app.MapDelete("/Marks/Delete/{t}", (IMarksService service, int t) => service.DeleteMark(t));
 
         app.MapPost("/Students/{subject}/AddSubject", (IStudentService service, int subject, Student student) => service.AddSubjectToStudent(student, subject));
-        app.MapPost("/Students/{subject}/DeleteSubject/{student}", (IStudentService service, int subject, string student) => service.RemoveSubject(student, subject));
+        app.MapPut("/Students/{subject}/DeleteSubject", (IStudentService service, int subject, Student student) => service.RemoveSubject(student, subject));
 
         // Add additional endpoints required by the Identity /Account Razor components.
         app.MapAdditionalIdentityEndpoints();
