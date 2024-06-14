@@ -84,12 +84,12 @@ namespace StudentsMakrs.Services
             var ID = certificateData.ID;
             //var std = await context.Students.Where(x => x.StudentID == ID).FirstAsync() ?? throw new ArgumentException($"Givend id is not finded {ID}", nameof(ID));
             var std = await context.Students.FindAsync(ID) ?? throw new ArgumentException($"Givend id is not finded {ID}", nameof(ID));
-            std.StudentPassword = "";
 
             if (certificateData.Password != std.StudentPassword)
             {
                 return null;
             }
+            std.StudentPassword = "";
 
             return std;
         }

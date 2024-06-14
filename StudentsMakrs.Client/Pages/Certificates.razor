@@ -18,7 +18,7 @@
 <p><em>Input student password and id</em></p>
 <input @bind="@ID" placeholder="ID" />
 <input @bind="@Password" placeholder="Password" />
-<button @onclick="@LoadStudent">Find</button>
+<button class="btn btn-primary"  @onclick="@LoadStudent">Find</button>
 
 @if (student != null)
 {
